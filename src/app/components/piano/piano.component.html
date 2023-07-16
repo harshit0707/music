@@ -1,0 +1,77 @@
+<div class="piano-container">
+    <ul id="keyboard">
+        <ng-container *ngFor="let octave of numSequence(this.pianoConfigForm.get('noOfOctaves')!.value)">
+            <li note="C"
+                [attr.octaveOffset]="octave"
+                class="white">C</li>
+            <li note="C#"
+                [attr.octaveOffset]="octave"
+                class="black">C&#x266f; D&#x266d;</li>
+            <li note="D"
+                [attr.octaveOffset]="octave"
+                class="white offset">D</li>
+            <li note="D#"
+                [attr.octaveOffset]="octave"
+                class="black">D&#x266f; E&#x266d;</li>
+            <li note="E"
+                [attr.octaveOffset]="octave"
+                class="white offset">E</li>
+            <li note="F"
+                [attr.octaveOffset]="octave"
+                class="white">F</li>
+            <li note="F#"
+                [attr.octaveOffset]="octave"
+                class="black">F&#x266f; G&#x266d;</li>
+            <li note="G"
+                [attr.octaveOffset]="octave"
+                class="white offset">G</li>
+            <li note="G#"
+                [attr.octaveOffset]="octave"
+                class="black">G&#x266f; A&#x266d;</li>
+            <li note="A"
+                [attr.octaveOffset]="octave+1"
+                class="white offset">A</li>
+            <li note="A#"
+                [attr.octaveOffset]="octave+1"
+                class="black">A&#x266f; B&#x266d;</li>
+            <li note="B"
+                [attr.octaveOffset]="octave+1"
+                class="white offset">B</li>
+        </ng-container>
+    </ul>
+
+    <p 
+       id="chordDisplay" [innerHTML]="currentChord"></p>
+
+    <div>
+        <button (click)="startChords()"
+                [disabled]="chordDisplayInterval">
+            Start
+        </button>
+        <button (click)="stopChords()"
+                [disabled]="!chordDisplayInterval">
+            Stop
+        </button>
+    </div>
+
+    <form [formGroup]="pianoConfigForm">
+        <div>
+            <label for="noOfOctaves">Select no of octaves: </label>
+            <select name="noOfOctaves"
+                    formControlName="noOfOctaves"
+                    (change)="octavesCountChange()">
+                <option *ngFor="let number of numSequence(8)"
+                        value={{number}}>{{number}}</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="chordChangeInterval">Chord change interval time: </label>
+            <input type="number"
+                   name="chordChangeInterval"
+                   formControlName="chordChangeInterval"
+                   min="0"
+                   max="10">
+        </div>
+    </form>
+</div>
