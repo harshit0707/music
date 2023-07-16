@@ -4,7 +4,10 @@ import { PianoComponent } from './components/piano/piano.component';
 
 const routes: Routes = [
   {
-    path: '', component: PianoComponent
+    path: '', redirectTo: 'piano', pathMatch: 'full'
+  },
+  {
+    path: 'piano', component: PianoComponent
   }
 ];
 
