@@ -76,10 +76,6 @@ export class PianoComponent implements OnInit, OnDestroy {
     });
   }
 
-  playKey() {
-
-  }
-
   startChords() {
     if (this.chordDisplayInterval) return;
 
@@ -91,36 +87,36 @@ export class PianoComponent implements OnInit, OnDestroy {
       chordDisplayElement.style.animationDuration = intervalValue + 's';
     }
 
-    this.chordDisplayInterval = setInterval(() => {
-      while (true) {
-        let [chord, value] = this.getRandomChord();
-        if (chord == this.currentChord) continue;
-
-        this.currentChord = chord + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + value;
-        // console.log(value);
-        this.playChord(chord, value, intervalValue);
-        break;
-      }
-    }, intervalValue * 1000);
+    this.playChord();
+    this.chordDisplayInterval = setInterval(this.playChord.bind(this), intervalValue * 1000);
   }
 
-  playChord(chord: string, value: string, intervalValue: number) {
-    let firstKey = value[0];
-    value.split('-').forEach((key) => {
-      let offset = 0;
-      if (KEY_ORDER.indexOf(key[0]) < KEY_ORDER.indexOf(firstKey)) offset = 1;
-      this._audioService.playKey(key, 4 + offset)
-      // console.log(key);
-      key = NoteMapping[key];
-      let elements = document.querySelectorAll('[note="' + key + '"]')
-      // console.log(elements);
-      elements.item(0 + offset).classList.add("pressed")
+  playChord() {
+    let intervalValue = this.pianoConfigForm.get('chordChangeInterval')?.value;
+    while (true) {
+      let [chord, value] = this.getRandomChord();
+      if (chord == this.currentChord) continue;
 
-      this._audioService.stopKey(key, 4 + offset)
-      setTimeout(() => {
-        elements.item(0 + offset).classList.remove("pressed")
-      }, intervalValue * 900)
-    })
+      this.currentChord = chord + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' + value;
+      // console.log(value);
+      let firstKey = value[0];
+      value.split('-').forEach((key) => {
+        let offset = 0;
+        if (KEY_ORDER.indexOf(key[0]) < KEY_ORDER.indexOf(firstKey)) offset = 1;
+        this._audioService.playKey(key, 4 + offset)
+        // console.log(key);
+        key = NoteMapping[key];
+        let elements = document.querySelectorAll('[note="' + key + '"]')
+        // console.log(elements);
+        elements.item(0 + offset).classList.add("pressed")
+
+        this._audioService.stopKey(key, 4 + offset)
+        setTimeout(() => {
+          elements.item(0 + offset).classList.remove("pressed")
+        }, intervalValue * 900)
+      })
+      break;
+    }
   }
 
   getRandomChord() {
