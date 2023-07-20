@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Note } from '../enums/Notes';
 
+import * as pianoWaveTable from './../../assets/wave-tables/piano.json';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -9,8 +11,11 @@ export class AudioService {
   audioContext!: AudioContext;
   pressedNotes = new Map();
 
+  waveTable: any;
+
   constructor() {
     this.audioContext = new (window.AudioContext)();
+    this.waveTable = pianoWaveTable;
   }
 
   getFrequency(note: Note | string = Note.A, octave = 4) {
@@ -117,7 +122,14 @@ export class AudioService {
     setRelease();
   
     osc.connect(noteGainNode);
+
+    const wave = new PeriodicWave(this.audioContext, {
+      real: this.waveTable.real,
+      imag: this.waveTable.imag,
+    });
     osc.type = "triangle"; // waveform type (used to determine the timbre of the sound)
+    // osc.type = "custom";
+    // osc.setPeriodicWave(wave);
   
     const freq = this.getFrequency(key, (octaveOffset || - 1));
   
